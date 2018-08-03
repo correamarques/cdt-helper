@@ -6,13 +6,30 @@ namespace ConsoleApp1
 {
   public class LimitesDisponibilidades
   {
-    public static void Run()
+    readonly string content, filePath = string.Empty;
+
+    public string Content => content;
+    public string GeneratedFile { get; set; }
+
+
+    public LimitesDisponibilidades(string content, string filePath)
     {
-      UpdateLimitesDisponibilidades(@"C:\Temp\ajuste_contas3.txt");
+      this.content = content;
+      this.filePath = filePath;
     }
 
 
-    static void UpdateLimitesDisponibilidades(string filePath)
+    public static void Run()
+    {
+      string filePath = @"C:\Temp\ajuste_contas3.txt";
+      string content = System.IO.File.ReadAllText(filePath);
+
+      LimitesDisponibilidades limitesDisponibilidades = new LimitesDisponibilidades(content, filePath);
+      limitesDisponibilidades.UpdateLimitesDisponibilidades();
+    }
+
+
+    public string UpdateLimitesDisponibilidades()
     {
       System.IO.FileInfo fi = new System.IO.FileInfo(filePath);
 
@@ -21,8 +38,13 @@ namespace ConsoleApp1
       builder.AppendLine("SET NOCOUNT ON");
       builder.AppendLine("BEGIN");
 
-      foreach (var line in System.IO.File.ReadAllLines(filePath))
+      string[] lines = content.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+      foreach (var line in lines)
       {
+        if (line.Length <= 5)
+          break;
+
         int idConta = Int32.Parse(line.Split('\t')[0]);
         string value = line.Split('\t')[1];
 
@@ -39,8 +61,11 @@ namespace ConsoleApp1
       }
 
       builder.AppendLine("END");
-      
-      System.IO.File.WriteAllText(fi.FullName.Replace(fi.Extension, ".sql"), builder.ToString(), Encoding.ASCII);
+
+      GeneratedFile = fi.FullName.Replace(fi.Extension, ".sql");
+      System.IO.File.WriteAllText(GeneratedFile, builder.ToString(), Encoding.ASCII);
+
+      return builder.ToString();
     }
   }
 }

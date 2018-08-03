@@ -14,9 +14,9 @@ namespace ConsoleApp1
       //UpdateLimitesDisponibilidades();
       //StringBuilderJava();
 
-      SmsContas.Run();
+      //SmsContas.Run();
       //FaturaService.Run();
-      //LimitesDisponibilidades.Run();
+      LimitesDisponibilidades.Run();
     }
   }
 }
