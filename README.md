@@ -1,0 +1,2 @@
+# cdt-helper
+Script generator
